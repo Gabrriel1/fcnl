@@ -1,696 +1,385 @@
+
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Freecash</title>
-  <link rel="icon" href="data:,">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Freecash – Speel games en verdien beloningen</title>
+<meta name="description" content="Ontdek games en aanbiedingen op Freecash en verdien beloningen.">
 <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    :root {
-      --bg: #030704;
-      --card: #0b1710;
-      --card2: #101f16;
-      --green: #39ff88;
-      --green2: #19c762;
-      --text: #f5fff7;
-      --muted: #a7b8ab;
-      --yellow: #ffd56a;
-      --red: #ff5c6c;
-      --line: rgba(255,255,255,.10);
-      --shadow: 0 24px 70px rgba(0,0,0,.55);
-      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      min-height: 100vh;
-      font-family: var(--font);
-      color: var(--text);
-      background:
-        radial-gradient(circle at 50% -10%, rgba(57,255,136,.35), transparent 35%),
-        radial-gradient(circle at 100% 25%, rgba(255,213,106,.16), transparent 28%),
-        linear-gradient(180deg, #06140b 0%, #030704 65%, #020302 100%);
-      overflow-x: hidden;
-    }
-
-    body.lock {
-      overflow: hidden;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    button,
-    a {
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .age-gate {
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      height: 100dvh;
-      z-index: 99999;
-      display: block;
-      padding: 0;
-      background: #030704;
-      overflow-y: auto;
-      overscroll-behavior: contain;
-      transition: opacity .25s ease, visibility .25s ease;
-    }
-
-    .age-gate.hide {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
-
-    .age-box {
-      width: 100%;
-      max-width: none;
-      min-height: 100vh;
-      min-height: 100dvh;
-      padding: max(30px, env(safe-area-inset-top)) 22px max(30px, env(safe-area-inset-bottom));
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      border-radius: 0;
-      background: radial-gradient(circle at 50% 20%, #143322 0%, #07150c 45%, #030704 100%);
-      border: 0;
-      box-shadow: none;
-    }
-
-    .age-box h2, .age-box p, .age-actions, .deny {
-      width: 100%;
-      max-width: 520px;
-    }
-    .age-actions { gap: 12px; }
-
-    .age-icon {
-      width: 94px;
-      height: 94px;
-      border-radius: 24px;
-      margin: 0 auto 18px;
-      display: grid;
-      place-items: center;
-      color: #031108;
-      font-size: 28px;
-      font-weight: 1000;
-      background: linear-gradient(180deg, #67ffa3, #20d66b);
-      box-shadow: 0 16px 36px rgba(57,255,136,.28);
-    }
-
-    .age-box h2 {
-      font-size: 46px;
-      line-height: 1.03;
-      letter-spacing: -.06em;
-      margin-bottom: 10px;
-    }
-
-    .age-box p {
-      color: var(--muted);
-      font-size: 16px;
-      line-height: 1.5;
-      margin-bottom: 24px;
-    }
-
-    .age-actions {
-      display: grid;
-      gap: 10px;
-    }
-
-    .age-actions button {
-      border: 0;
-      min-height: 66px;
-      border-radius: 18px;
-      font-size: 15px;
-      font-weight: 900;
-      cursor: pointer;
-    }
-
-    .yes {
-      color: #031108;
-      background: linear-gradient(180deg, #67ffa3, #20d66b);
-      box-shadow: 0 16px 30px rgba(32,214,107,.24);
-    }
-
-    .no {
-      color: #e8f3eb;
-      background: rgba(255,255,255,.07);
-      border: 1px solid rgba(255,255,255,.10);
-    }
-
-    .deny {
-      display: none;
-      margin-top: 12px;
-      color: #ffc0c7;
-      font-size: 12px;
-      font-weight: 800;
-    }
-
-    .page {
-      width: 100%;
-      max-width: 430px;
-      margin: 0 auto;
-      min-height: 100vh;
-      padding: 14px 14px 112px;
-    }
-
-    .top {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 18px;
-      padding-top: 4px;
-    }
-
-    .brand-combo {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 9px 13px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.10);
-      box-shadow: 0 12px 34px rgba(0,0,0,.28);
-    }
-
-    .brand-combo img {
-      width: 34px;
-      height: 34px;
-      border-radius: 12px;
-      object-fit: cover;
-      background: rgba(255,255,255,.08);
-    }
-
-    .brand-combo span {
-      color: var(--green);
-      font-size: 18px;
-      font-weight: 1000;
-      line-height: 1;
-    }
-
-    .hero {
-      min-height: 72vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 4px 0 20px;
-    }
-
-    .payout-badge {
-      width: fit-content;
-      margin: 0 auto 24px;
-      padding: 10px 15px;
-      border-radius: 999px;
-      color: #baffd0;
-      background: rgba(57,255,136,.12);
-      border: 1px solid rgba(57,255,136,.34);
-      box-shadow: inset 0 0 20px rgba(57,255,136,.05);
-      font-size: 14px;
-      font-weight: 1000;
-    }
-
-    h1 {
-      text-align: center;
-      font-size: clamp(38px, 12vw, 54px);
-      line-height: .98;
-      letter-spacing: -.065em;
-      font-weight: 1000;
-      margin-bottom: 18px;
-    }
-
-    h1 span {
-      color: var(--green);
-      text-shadow: 0 0 30px rgba(57,255,136,.25);
-    }
-
-    .mini-text {
-      max-width: 335px;
-      margin: 0 auto 22px;
-      text-align: center;
-      color: #dbe6de;
-      font-size: 17px;
-      line-height: 1.45;
-      font-weight: 750;
-    }
-
-    .chips {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin: 0 auto 26px;
-      max-width: 350px;
-    }
-
-    .chip {
-      min-height: 48px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 10px 12px;
-      border-radius: 999px;
-      color: #f4fff7;
-      background: rgba(255,255,255,.055);
-      border: 1px solid rgba(255,255,255,.12);
-      font-size: 13px;
-      font-weight: 900;
-      text-align: center;
-    }
-
-    .section-title {
-      margin: 22px 0 12px;
-      color: #eee9f6;
-      font-size: 13px;
-      font-weight: 1000;
-      letter-spacing: .24em;
-      text-transform: uppercase;
-    }
-
-    .offer-heading {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin: 22px 0 12px;
-    }
-
-    .offer-heading .section-title {
-      margin: 0;
-      font-size: 11px;
-      letter-spacing: .16em;
-      white-space: nowrap;
-    }
-
-    .offer-card {
-      position: relative;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      min-height: 112px;
-      padding: 16px;
-      border-radius: 28px;
-      background: rgba(255,255,255,.045);
-      border: 1px solid rgba(255,255,255,.11);
-      box-shadow: 0 18px 48px rgba(0,0,0,.32);
-    }
-
-    .play {
-      width: 58px;
-      height: 58px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      flex-shrink: 0;
-      background: rgba(57,255,136,.12);
-      border: 4px solid var(--green);
-      color: #fff;
-      font-size: 20px;
-      box-shadow: 0 0 25px rgba(57,255,136,.26);
-    }
-
-    .offer-card strong {
-      display: block;
-      max-width: 205px;
-      margin-bottom: 4px;
-      font-size: 18px;
-      line-height: 1.12;
-      letter-spacing: -.03em;
-    }
-
-    .offer-card span {
-      color: #dbcfe0;
-      font-size: 13px;
-      line-height: 1.35;
-      font-weight: 760;
-    }
-
-    .hot {
-      flex-shrink: 0;
-      padding: 7px 11px;
-      border-radius: 999px;
-      background: var(--yellow);
-      color: #3a2500;
-      font-size: 11px;
-      font-weight: 1000;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-    }
-
-    .rating {
-      position: absolute;
-      right: 20px;
-      bottom: 17px;
-      color: #fff;
-      font-size: 13px;
-      font-weight: 1000;
-    }
-
-    .rating i {
-      color: var(--yellow);
-      font-style: normal;
-    }
-
-    .tip-card {
-      margin-top: 18px;
-      padding: 24px 22px 19px;
-      border-radius: 28px;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.025)),
-        radial-gradient(circle at top left, rgba(57,255,136,.12), transparent 34%);
-      border: 1px solid rgba(156,255,188,.22);
-      overflow: hidden;
-      box-shadow: 0 18px 48px rgba(0,0,0,.30);
-    }
-
-    .tip-label {
-      color: var(--yellow);
-      font-size: 14px;
-      font-weight: 1000;
-      text-transform: uppercase;
-      letter-spacing: -.02em;
-      margin-bottom: 18px;
-    }
-
-    .tip-card h2 {
-      font-size: 29px;
-      line-height: 1.08;
-      letter-spacing: -.055em;
-      margin-bottom: 15px;
-    }
-
-    .tip-card h2 span {
-      color: var(--yellow);
-    }
-
-    .tip-card p {
-      color: #eadff0;
-      font-size: 15px;
-      line-height: 1.45;
-      font-weight: 760;
-      margin-bottom: 18px;
-    }
-
-    .rainbow {
-      height: 6px;
-      border-radius: 999px;
-      background: linear-gradient(90deg, #39ff88, #e8ff3f, #ffbb38, #ff6b4a);
-      box-shadow: 0 0 20px rgba(57,255,136,.22);
-    }
-
-    .steps-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-
-    .mini-step {
-      min-height: 180px;
-      padding: 18px 10px 12px;
-      border-radius: 18px;
-      text-align: center;
-      background: rgba(255,255,255,.035);
-      border: 1px solid rgba(255,255,255,.10);
-    }
-
-    .mini-step .big {
-      display: block;
-      color: var(--green);
-      font-size: 34px;
-      line-height: 1;
-      font-weight: 1000;
-      margin-bottom: 10px;
-    }
-
-    .mini-step .icon {
-      display: block;
-      color: var(--green);
-      font-size: 32px;
-      line-height: 1;
-      margin-bottom: 16px;
-    }
-
-    .mini-step strong {
-      display: block;
-      color: #fff;
-      font-size: 15px;
-      line-height: 1.12;
-      letter-spacing: -.035em;
-      margin-bottom: 10px;
-    }
-
-    .mini-step p {
-      color: #b8c7bd;
-      font-size: 12px;
-      line-height: 1.35;
-      font-weight: 700;
-    }
-
-    .cashout {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 16px;
-    }
-
-    .cashout span {
-      padding: 9px 11px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.08);
-      color: #d7e7db;
-      font-size: 12px;
-      font-weight: 850;
-    }
-
-    .note {
-      margin-top: 12px;
-      color: #8fa596;
-      text-align: center;
-      font-size: 11px;
-      line-height: 1.45;
-    }
-
-    .sticky {
-      position: fixed;
-      left: 50%;
-      bottom: max(12px, env(safe-area-inset-bottom));
-      transform: translateX(-50%);
-      width: min(430px, calc(100% - 24px));
-      z-index: 20;
-      padding: 10px;
-      border-radius: 26px;
-      background: rgba(3,7,4,.78);
-      border: 1px solid rgba(255,255,255,.10);
-      backdrop-filter: blur(14px);
-      box-shadow: 0 18px 55px rgba(0,0,0,.55);
-    }
-
-    .cta {
-      min-height: 64px;
-      border-radius: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      color: #031108;
-      background: linear-gradient(180deg, #67ffa3, #20d66b);
-      box-shadow: 0 16px 34px rgba(32,214,107,.28);
-      font-weight: 1000;
-      font-size: 18px;
-      letter-spacing: -.035em;
-      text-align: center;
-    }
-
-    .cta small {
-      display: block;
-      font-size: 11px;
-      font-weight: 850;
-      opacity: .72;
-      margin-top: 2px;
-      letter-spacing: 0;
-    }
-
-    footer {
-      padding: 28px 0 8px;
-      text-align: center;
-      color: #718477;
-      font-size: 11px;
-      line-height: 1.6;
-    }
-
-    footer a {
-      margin: 0 7px;
-      color: #7f9686;
-    }
-
-    @media (max-width: 480px) {
-      .age-box { padding: 30px 22px 26px; }
-      .age-box h2 { font-size: clamp(32px, 9vw, 44px); }
-    }
-
-    @media (max-width: 370px) {
-      .offer-heading {
-        gap: 6px;
-      }
-
-      .offer-heading .section-title {
-        font-size: 10px;
-        letter-spacing: .1em;
-      }
-
-      .hot {
-        padding: 6px 8px;
-        font-size: 9px;
-      }
-
-      .chips {
-        grid-template-columns: 1fr;
-      }
-
-      .steps-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .mini-step {
-        min-height: auto;
-      }
-    }
-  </style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#030704;
+  --card:#0b1710;
+  --green:#39ff88;
+  --green2:#20d66b;
+  --text:#f5fff7;
+  --muted:#a7b8ab;
+  --yellow:#ffd56a;
+}
+html{scroll-behavior:smooth}
+body{
+  min-height:100vh;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--text);
+  background:radial-gradient(circle at 50% -5%,rgba(57,255,136,.22),transparent 35%),linear-gradient(180deg,#06140b,#030704 65%,#020302);
+}
+.page{width:100%;max-width:520px;margin:auto;padding:20px 16px 120px}
+.top{text-align:center;margin-bottom:18px}
+.logo{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:10px 18px;border-radius:18px;
+  background:#102018;border:1px solid #285239;
+  color:var(--green);font-size:25px;font-weight:900;
+}
+.logo img{width:36px;height:36px;object-fit:contain;border-radius:10px}
+.top-pill{
+  width:max-content;max-width:100%;
+  margin:0 auto 15px;padding:9px 15px;
+  border-radius:100px;background:#102018;
+  border:1px solid #285239;color:#c9fbd7;
+  font-size:11px;font-weight:900;letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.dot{display:inline-block;width:8px;height:8px;background:var(--green);border-radius:50%;margin-right:8px;box-shadow:0 0 12px var(--green)}
+.hero{
+  padding:23px 17px;border-radius:27px;
+  background:linear-gradient(160deg,#10251a,#07110b);
+  border:1px solid #27533a;
+  box-shadow:0 20px 55px #0007;
+}
+.urgency{
+  width:max-content;max-width:100%;
+  margin:0 auto 17px;padding:8px 12px;
+  border-radius:100px;background:#143822;
+  color:#8fffb0;font-size:11px;font-weight:900;
+  text-align:center;
+}
+h1{
+  text-align:center;font-size:clamp(30px,8vw,43px);
+  line-height:1.08;letter-spacing:-.045em;
+  margin-bottom:15px;font-weight:900;
+}
+.accent{color:var(--green)}
+.subtext{
+  color:var(--muted);font-size:15px;
+  line-height:1.6;text-align:center;margin-bottom:14px;
+}
+.trust{text-align:center;color:#b7e7c4;font-size:13px;font-weight:750;margin-bottom:20px}
+.trust strong{color:#fff}
+.proof-row{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.proof{
+  padding:14px 8px;border-radius:16px;
+  background:#ffffff08;border:1px solid #ffffff12;
+  text-align:center;
+}
+.proof strong{display:block;color:#fff;font-size:17px;margin-bottom:6px}
+.proof span{font-size:11px;color:var(--muted);line-height:1.4}
+.strip{
+  padding:16px;margin:17px 0;border-radius:18px;
+  background:#10291a;border:1px solid #28603b;
+  color:#c5e7ce;font-size:13px;line-height:1.6;
+}
+.strip strong{color:#fff}
+.section-title{
+  margin:22px 0 12px;text-align:center;
+  font-size:12px;font-weight:900;letter-spacing:.12em;
+  text-transform:uppercase;color:#91b69c;
+}
+.offer-card,.steps,.testimonial{
+  border-radius:22px;background:var(--card);
+  border:1px solid #28543a;
+  box-shadow:0 15px 35px #0005;
+}
+.offer-card{
+  display:flex;align-items:center;gap:13px;
+  padding:15px;margin-bottom:12px;
+}
+.game-icon{
+  width:54px;height:54px;border-radius:15px;
+  display:grid;place-items:center;flex-shrink:0;
+  background:#173c25;font-size:28px;
+}
+.offer-info{flex:1;min-width:0}
+.offer-info strong{display:block;font-size:16px;margin-bottom:5px}
+.offer-info span{font-size:12px;color:var(--muted);line-height:1.5}
+.hot{
+  display:inline-block!important;background:#ff8800;
+  color:white!important;border-radius:5px;padding:3px 6px;
+  font-size:9px!important;margin-left:4px;
+}
+.price{text-align:right;flex-shrink:0}
+.price strong{display:block;color:var(--green);font-size:24px}
+.price span{font-size:12px;color:var(--yellow)}
+.steps{padding:12px;display:grid;gap:10px}
+.step{
+  display:flex;gap:13px;align-items:flex-start;
+  padding:12px;border-radius:16px;
+  background:#ffffff07;border:1px solid #ffffff0d;
+}
+.num{
+  display:grid;place-items:center;flex-shrink:0;
+  width:42px;height:42px;border-radius:13px;
+  background:#153c24;color:var(--green);
+  font-weight:900;font-size:17px;
+}
+.step h3{font-size:15px;margin-bottom:5px}
+.step p{color:var(--muted);font-size:13px;line-height:1.5}
+.testimonial{padding:18px;min-height:170px;overflow:hidden}
+.live-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:14px}
+.live-label{color:#a8ffbd;font-size:12px;font-weight:900}
+.live-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:6px;box-shadow:0 0 10px var(--green)}
+.demo-label{font-size:10px;color:#8da897}
+.stars{color:var(--yellow);letter-spacing:2px;margin-bottom:12px}
+.comment{transition:opacity .35s ease,transform .35s ease;opacity:1;transform:translateY(0)}
+.comment.fade{opacity:0;transform:translateY(7px)}
+.comment p{color:#e6f7eb;font-size:14px;line-height:1.65;margin-bottom:12px;min-height:46px}
+.username{font-size:13px;font-weight:900;color:white}
+.comment-count{display:flex;justify-content:center;gap:6px;margin-top:15px}
+.comment-count span{width:7px;height:7px;border-radius:10px;background:#31523c}
+.comment-count span.active{width:20px;background:var(--green)}
+footer{text-align:center;color:#819a88;font-size:12px;line-height:1.8;margin-top:25px}
+footer a{color:inherit;margin:0 7px;text-decoration:none}
+.sticky{
+  position:fixed;left:50%;bottom:12px;
+  transform:translateX(-50%);
+  width:min(490px,calc(100% - 24px));
+  padding:9px;border-radius:24px;
+  background:#030704e8;border:1px solid #ffffff20;
+  backdrop-filter:blur(14px);z-index:50;
+  box-shadow:0 12px 40px #0009;
+}
+.cta{
+  display:flex;align-items:center;justify-content:center;
+  min-height:68px;border-radius:17px;
+  background:linear-gradient(180deg,#79ef91,#50d96e);
+  color:#041509;text-decoration:none;text-align:center;
+  box-shadow:0 10px 30px #20d66b45;
+  transition:transform .2s,filter .2s;
+}
+.cta:hover{transform:translateY(-2px);filter:brightness(1.06)}
+.cta strong{display:block;font-size:17px;font-weight:1000}
+.cta small{display:block;font-size:11px;font-weight:850;margin-top:4px;color:#23432a}
+.cta-note{text-align:center;font-size:11px;color:#9dbba5;margin-top:7px}
+@media(max-width:420px){
+ .page{padding-left:13px;padding-right:13px}
+ .proof-row{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+ .proof{padding:12px 4px}
+ .proof strong{font-size:14px}
+ .proof span{font-size:10px}
+ .offer-card{gap:9px;padding:12px}
+ .game-icon{width:46px;height:46px;font-size:23px}
+ .price strong{font-size:20px}
+ .cta strong{font-size:16px}
+}
+</style>
 </head>
 <body>
-  <main class="page">
 
-    <header class="top">
-      <div class="brand-combo">
-        <img src="../assets/freecash-logo.webp" alt="Freecash">
-      </div>
-    </header>
+<main class="page">
 
-    <section class="hero">
-      <div class="payout-badge">✓ Al meer dan € 50.000.000 uitbetaald</div>
+<div class="top-pill"><span class="dot"></span>Nieuw account vereist</div>
 
-      <h1>
-        Verdien beloningen door <span>te spelen</span>
-      </h1>
-
-      <p class="mini-text">
-        Ontdek games en opdrachten op Freecash waarmee je beloningen kunt verdienen.
-      </p>
-
-      <div class="chips">
-        <div class="chip">⚡ Snelle uitbetalingen</div>
-        <div class="chip">🔒 Veilig account</div>
-        <div class="chip">🎁 Dagelijkse bonussen</div>
-        <div class="chip">🎮 Games spelen</div>
-      </div>
-
-      <div class="tip-card">
-        <div class="tip-label">⚡ Pro-tip</div>
-        <h2>Ontgrendel <span>hogere beloningen</span> </h2>
-        <p>Voltooi 2 tot 3 startopdrachten om betere beloningen vrij te spelen en mogelijk meer te verdienen.</p>
-        <div class="rainbow"></div>
-      </div>
-
-      <div class="offer-heading">
-        <div class="section-title">Aanbevolen aanbieding</div>
-        <div class="hot">Populaire aanbieding</div>
-      </div>
-
-      <div class="offer-card">
-        <div class="play">▶</div>
-        <div>
-          <strong>Verdien geld met games</strong>
-          <span>Ontdek eenvoudige aanbiedingen en opdrachten waarmee je beloningen kunt verdienen.</span>
-        </div>
-        <div class="rating"><i>★</i> 5.0</div>
-      </div>
-    </section>
-
-    <div class="section-title">Hoe werkt het?</div>
-
-    <section class="steps-grid">
-      <div class="mini-step">
-        <span class="big">1</span>
-        <span class="icon">＋</span>
-        <strong>Kies een aanbieding</strong>
-        <p>Selecteer een beschikbare opdracht in je dashboard.</p>
-      </div>
-
-      <div class="mini-step">
-        <span class="big">2</span>
-        <span class="icon">✓</span>
-        <strong>Voltooi opdrachten</strong>
-        <p>Ontgrendel nach den ersten Angeboten bessere Belohnungen frei.</p>
-      </div>
-
-      <div class="mini-step">
-        <span class="big">3</span>
-        <span class="icon">$</span>
-        <strong>Ontvang je beloning</strong>
-        <p>Wissel je beloningen in via beschikbare uitbetalingsmethoden.</p>
-      </div>
-    </section>
-
-    <div class="cashout">
-      <span>PayPal</span>
-      <span>Crypto</span>
-      <span>Cadeaubonnen</span>
+<section class="hero">
+  <div class="top">
+    <div class="logo">
+      <img src="../assets/freecash-logo.webp" alt="Freecash" onerror="this.style.display='none'">
+      Freecash
     </div>
-
-    <p class="note">
-      Beloningen zijn niet gegarandeerd en kunnen variëren per aanbieding, gebruiker en beschikbaarheid.
-    </p>
-
-    <footer>
-      <a href="#">Privacybeleid</a>
-      <a href="#">Algemene voorwaarden</a>
-      <a href="#">Disclaimer</a><br>
-      © 2026
-    </footer>
-
-  </main>
-
-  <div class="sticky">
-    <a
-      class="cta" id="registerBtn"
-      href="https://taprkr.com/r/eyJ0IjoiZnJlZWNhc2gtY3BpIiwidGlkIjoiNTg3NGFjOThkZDg1MjQ1YjM1MWMiLCJ0cyI6MTc5MjIyNDkyODA4M30"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <span>
-        Registreer en ontvang € 8 bonus →
-        <small>Games spelen und Belohnungen verdienen</small>
-      </span>
-    </a>
   </div>
 
+  <div class="urgency">● Ontdek beschikbare aanbiedingen</div>
+
+  <h1>Verdien beloningen door <span class="accent">apps</span> en games te testen</h1>
+
+  <p class="subtext">
+    Registreer je, ontdek eenvoudige opdrachten en speel games om beloningen te verdienen op Freecash.
+  </p>
+
+  <div class="trust">✓ Ontdek games, enquêtes en andere aanbiedingen</div>
+
+  <div class="proof-row">
+    <div class="proof">
+      <strong>€8</strong>
+      <span>Aangeboden registratiebonus*</span>
+    </div>
+    <div class="proof">
+      <strong>Gratis</strong>
+      <span>Account aanmaken</span>
+    </div>
+    <div class="proof">
+      <strong>iOS + Android</strong>
+      <span>Speel op je apparaat</span>
+    </div>
+  </div>
+</section>
+
+<div class="strip">
+  <strong>Hoe werkt het verdienen van beloningen?</strong>
+  Freecash biedt opdrachten aan, zoals games spelen, apps testen en enquêtes invullen. Je beloning hangt af van de aanbieding en de voorwaarden.
+</div>
+
+<div class="section-title">Wat kun je ontdekken?</div>
+
+<div class="offer-card">
+  <div class="game-icon">🧩</div>
+  <div class="offer-info">
+    <strong>Block Blast <span class="hot">POPULAIR</span></strong>
+    <span>Speel de game en ontdek beschikbare opdrachten.</span>
+  </div>
+  <div class="price">
+    <strong>€106</strong>
+    <span>Voorbeeld*</span>
+  </div>
+</div>
+
+<div class="offer-card">
+  <div class="game-icon">🏃</div>
+  <div class="offer-info">
+    <strong>Subway Surfers</strong>
+    <span>Ontdek uitdagingen en beschikbare beloningen.</span>
+  </div>
+  <div class="price">
+    <strong>★ 5.0</strong>
+    <span>Voorbeeld</span>
+  </div>
+</div>
+
+<div class="section-title">Hoe werkt het?</div>
+
+<section class="steps">
+  <div class="step">
+    <div class="num">1</div>
+    <div>
+      <h3>Maak je gratis account aan</h3>
+      <p>Registreer je op Freecash en bekijk de beschikbare aanbiedingen.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="num">2</div>
+    <div>
+      <h3>Kies een game of opdracht</h3>
+      <p>Lees de voorwaarden en voltooi de vereiste stappen om in aanmerking te komen voor beloningen.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="num">3</div>
+    <div>
+      <h3>Ontvang je beloningen</h3>
+      <p>Wanneer je opdracht wordt goedgekeurd, kun je beschikbare uitbetalingsmethoden bekijken.</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-title">Reacties uit de community</div>
+
+<section class="testimonial">
+  <div class="live-head">
+    <span class="live-label"><span class="live-dot"></span>Reacties</span>
+    <span class="demo-label">Voorbeeldreacties</span>
+  </div>
+
+  <div id="comment" class="comment" aria-live="off">
+    <div class="stars">★★★★★</div>
+    <p id="commentText">Ik speel Block Blast en ontdek ondertussen nieuwe beloningen! 🎮</p>
+    <strong id="commentUser" class="username">— GameMaster92</strong>
+  </div>
+
+  <div class="comment-count" id="dots">
+    <span class="active"></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</section>
+
+<p style="color:#90a998;text-align:center;font-size:11px;line-height:1.6;margin-top:18px">
+  *Bonussen en beloningen zijn afhankelijk van beschikbaarheid, voorwaarden en goedkeuring. De getoonde reacties zijn fictieve voorbeelden en geen geverifieerde gebruikerservaringen.
+</p>
+
+<footer>
+  <a href="#">Privacybeleid</a>
+  <a href="#">Algemene voorwaarden</a>
+  <a href="#">Disclaimer</a>
+  <div>© 2026 Freecash-aanbiedingen</div>
+</footer>
+
+</main>
+
+<div class="sticky">
+  <a
+    class="cta"
+    id="registerBtn"
+    href="https://taprkr.com/r/eyJ0IjoiZnJlZWNhc2gtY3BpIiwidGlkIjoiNTg3NGFjOThkZDg1MjQ1YjM1MWMiLCJ0cyI6MTc5MjIyNDkyODA4M30"
+    target="_blank"
+    rel="noopener noreferrer sponsored"
+  >
+    <span>
+      <strong>Registreer en ontvang €8 bonus →</strong>
+      <small>Speel games en verdien beloningen</small>
+    </span>
+  </a>
+  <div class="cta-note">Gratis registratie · Voorwaarden van toepassing</div>
+</div>
+
 <script>
-  // Păstrează parametrii de tracking când utilizatorul apasă Register.
-  const registerBtn = document.getElementById("registerBtn");
-  const destination = new URL(registerBtn.href);
-  const currentParams = new URLSearchParams(window.location.search);
-  currentParams.forEach(function (value, key) {
-    destination.searchParams.append(key, value);
-  });
-  registerBtn.href = destination.toString();
+const comments = [
+  {
+    user:"GameMaster92",
+    text:"Ik speel Block Blast en ontdek ondertussen nieuwe beloningen! 🎮"
+  },
+  {
+    user:"LisaGaming",
+    text:"Mijn beloning is binnengekomen. Bedankt! 💚"
+  },
+  {
+    user:"KevinNL",
+    text:"Leuk om nieuwe games te ontdekken en tegelijkertijd beloningen te verdienen!"
+  },
+  {
+    user:"BlockFan24",
+    text:"Block Blast is echt leuk om te spelen! 🧩"
+  },
+  {
+    user:"SophiePlay",
+    text:"Ik vind het fijn dat ik verschillende aanbiedingen kan ontdekken op Freecash."
+  }
+];
+
+let index = 0;
+const comment = document.getElementById("comment");
+const commentText = document.getElementById("commentText");
+const commentUser = document.getElementById("commentUser");
+const dots = document.querySelectorAll("#dots span");
+
+setInterval(() => {
+  comment.classList.add("fade");
+
+  setTimeout(() => {
+    index = (index + 1) % comments.length;
+    commentText.textContent = comments[index].text;
+    commentUser.textContent = "— " + comments[index].user;
+
+    dots.forEach((dot,i) => {
+      dot.classList.toggle("active",i === index);
+    });
+
+    comment.classList.remove("fade");
+  },350);
+},4000);
+
+// Affiliate-trackingparameters behouden
+const registerBtn = document.getElementById("registerBtn");
+const destination = new URL(registerBtn.href);
+const currentParams = new URLSearchParams(window.location.search);
+
+currentParams.forEach((value,key) => {
+  destination.searchParams.append(key,value);
+});
+
+registerBtn.href = destination.toString();
 </script>
+
 </body>
 </html>
